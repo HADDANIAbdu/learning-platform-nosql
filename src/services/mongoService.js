@@ -1,5 +1,6 @@
 // Question: Pourquoi créer des services séparés ?
-// Réponse: 
+// Réponse: cela permet de séparer le logique métier et respecter l'un des 5 principes SOLID de l'implémentation
+// POO (Single Responsability)
 
 const { ObjectId } = require('mongodb');
 
