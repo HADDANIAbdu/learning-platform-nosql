@@ -5,17 +5,27 @@
 
 
 // Question: Quelles sont les bonnes pratiques pour les clés Redis ?
-// Réponse : 1- utiliser des noms de clés descritifs.
+// Réponse : 1- utiliser des noms de clés descriptifs.
 //           2- éviter les clés trop longue.
 //           3- ajouter des dates d'experations .
 
-
+import { connectRedis } from "../config/db";
 
 // Fonctions utilitaires pour Redis
 async function cacheData(key, data, ttl) {
     // TODO: Implémenter une fonction générique de cache
+    try{
+      const redisClient = await connectRedis();
+
+      const dataStr = JSON.stringify(data);
+
+      await redisClient.set(key, dataStr, {EX: ttl});
+    }catch(error){
+      throw error;
+    }
   }
   
-  module.exports = {
+module.exports = {
     // TODO: Exporter les fonctions utilitaires
-  };
+    cacheData,
+};

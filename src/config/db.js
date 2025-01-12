@@ -22,9 +22,11 @@ async function connectMongo() {
   const uri = config.mongodb.uri;
   const database = config.mongodb.dbName;
 
+  if(mongoClient && mongoClient.isConnected()) return db;
+
   try{
-    mongoClient = new MongoClient(uri, { useNewUrlParser: true, useUnifiedTopology: true});
-    await mongoClient.connect();
+    if(!mongoClient) mongoClient = new MongoClient(uri, { useNewUrlParser: true, useUnifiedTopology: true});
+    if(!mongoClient.isConnected()) await mongoClient.connect();
 
     db = mongoClient.db(database);
 
@@ -34,6 +36,7 @@ async function connectMongo() {
       connectMongo();
     }, 5000);
 
+    throw error;
   } finally{
     await mongoClient.close();
   }
@@ -42,33 +45,36 @@ async function connectMongo() {
 async function connectRedis() {
   // TODO: Implémenter la connexion Redis
   // Gérer les erreurs et les retries
-
-  redisClient = redis.createClient({
-    url: config.redis.uri
-  });
-
-  try {
-    redisClient.on("connect", () => {
-      console.log("connection successed !");
+  if(!redisClient){
+    redisClient = redis.createClient({
+      url: config.redis.uri
     });
-
-    redisClient.on("error", (error) => {
-      console.log("Erreur connecting to redis !, ", error.message);
-    });
-
-    await redisClient.connect();
-
-    return redisClient;
-  } catch (error) {
-    setTimeout(() => {
-      connectRedis
-    }, 5000);
+  
+    try {
+      redisClient.on("connect", () => {
+        console.log("connection successed !");
+      });
+  
+      redisClient.on("error", (error) => {
+        console.log("Erreur connecting to redis !, ", error.message);
+      });
+  
+      await redisClient.connect();
+    } catch (error) {
+      setTimeout(() => {
+        connectRedis
+      }, 5000);
+      
+      throw error;
+    }
   }
+
+  return redisClient;
 }
 
 // Export des fonctions et clients
 module.exports = {
   // TODO: Exporter les clients et fonctions utiles
   connectMongo,
-  connectRedis
+  connectRedis,
 };
