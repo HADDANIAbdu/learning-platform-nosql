@@ -9,21 +9,20 @@
 //           2- éviter les clés trop longue.
 //           3- ajouter des dates d'experations .
 
-import { connectRedis } from "../config/db";
+const db  = require("../config/db");
 
 // Fonctions utilitaires pour Redis
 async function cacheData(key, data, ttl) {
     // TODO: Implémenter une fonction générique de cache
     try{
-      const redisClient = await connectRedis();
-
       const dataStr = JSON.stringify(data);
+      const redisClient = await db.connectRedis();
 
-      await redisClient.set(key, dataStr, {EX: ttl});
+      await redisClient.set(key, dataStr, { EX: ttl});
     }catch(error){
       throw error;
     }
-  }
+}
   
 module.exports = {
     // TODO: Exporter les fonctions utilitaires

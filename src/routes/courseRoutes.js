@@ -12,8 +12,10 @@ const router = express.Router();
 const courseController = require('../controllers/courseController');
 
 // Routes pour les cours
-router.post('/', courseController.createCourse);
+router.post('/create', courseController.createCourse);
 router.get('/:id', courseController.getCourse);
-router.get('/stats', courseController.getCourseStats);
+router.put('/update/:id', courseController.updateCourse);
+router.delete('/delete/:id', courseController.deleteCourse);
+router.get('/stats/:id', courseController.getCourseStats);
 
 module.exports = router;

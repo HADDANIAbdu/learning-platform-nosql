@@ -12,8 +12,15 @@ async function findOneById(collection, id) {
     
     const objectId = ObjectId.createFromHexString(id);
     const document = await collection.findOne({_id: objectId});
-
     return document != null ? document : null;
+  }catch(error){
+    throw error;
+  }
+}
+
+async function insertOne(collection, document) {
+  try{
+    const result = await collection.insertOne(document);
   }catch(error){
     throw error;
   }
@@ -23,4 +30,5 @@ async function findOneById(collection, id) {
 module.exports = {
   // TODO: Exporter les fonctions utilitaires
   findOneById,
+  insertOne,
 };
